@@ -14,8 +14,14 @@ shrinkable linked list to keep track of these blocks and a first-fit
 algorithm to allocate requested sizes of memory into suitable
 blocks. A mutex lock was also required to make sure that this
 program is thread-safe. 
+
+
 Implementation
+
+
 Mutex Lock
+
+
 First of all, memory allocations, reallocations and
 deallocations are supposed to be thread-safe and not
 interrupted. If that’s not the case, a failed or corrupted memory
@@ -25,7 +31,11 @@ implementing a Mutex Lock. I declared a global variable named
 global_malloc_lock of type pthread_mutex_t. Locking and
 unlocking it at beginning and end of memory allocations worked
 out pretty well for this program.
+
+
 Block-Header Structure
+
+
 Blocks and headers are needed for dynamic memory
 reallocation and deallocation operations. Portions of memory
 can be allocated without headers with mm_malloc, but without
@@ -43,7 +53,11 @@ Finally, In order to link all the blocks to each other and
 create a linked list of memory blocks, a next pointer should be
 present within the header section of the block. This allows us to
 traverse through the list.
+
+
 void* mm_malloc(size_t)
+
+
 First of all, if the parameter size equals to 0, there’s no
 point of allocating 0 memory so function returns a NULL value.
 If not, access to memory from other threads is locked
@@ -59,7 +73,11 @@ heap didn’t fail, this new block is placed on the linked list, mutex
 lock is unlocked and the pointer pointing to the block (one byte
 further from the header) is returned. If heap can not be
 incremented, a NULL value is returned.
+
+
 void mm_free(void* block)
+
+
 If the block variable sent to the function as an
 argument turns out to be already null, function terminates itself
 as there is nothing to do.
@@ -80,7 +98,11 @@ on, this block will function as a deallocated block, available to be
 occupied by other variables next time mm_malloc is called.
 Finally, global_malloc_lock is unlocked and function is
 terminated.
+
+
 void* mm_realloc(void*, size_t)
+
+
 In this function, first thing to do is checking the
 arguments. If the block is NULL or size equals 0,
 mm_malloc(size) is called.
@@ -95,7 +117,11 @@ freed by calling mm_free(block).
 Now that we have a new block with the requested size
 and all the content of the old block, function returns the new
 block.
+
+
 Analysis & Conclusion
+
+
 This program I coded works as it is supposed to without any
 errors, although there are two warnings as shown above.
 My biggest concern is that this algorithm called first-fit is
